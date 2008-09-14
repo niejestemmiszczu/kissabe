@@ -3,7 +3,7 @@
 	require_once("functions.php");
 
 	$url = $_REQUEST["url"];
-	$url_info = save_url($url);
+	$url_info = save_content($url, 1);
 
 	switch ($url_info[0])
 	{

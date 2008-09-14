@@ -2,39 +2,72 @@
 
 	require_once("config.php");
 	require_once("adodb/adodb.inc.php");
+	require_once("php-gettext/gettext.inc");
 
 	function get_connection()
 	{
 		return NewADOConnection(CONNECTION_STRING);
 	}
 
-	function save_url($url_addr)
+	function save_content($content_data, $status=1)
 	{
-		if (validate_url($url_addr) == false) 
+		$permitted_status = Array(1,2,3,4);
+		if (!in_array($status, $permitted_status))
+		{
+			return Array("PARAMETER_NOT_VALID", ""); 
+		}
+
+		if (in_array($status, Array(1,2,3)) && (has_xss($content_data) || strlen($content_data) == 0))
+		{
+			return Array("PARAMETER_NOT_VALID", ""); 
+		}
+
+		if (in_array($status, Array(4)) && 
+				(in_array($_FILES["content_data"]["type"], Array("image/png","image/jpeg")) == false)) 
+				// file max upload limit = 300kb and png or jpeg
+		{
+			return Array("PARAMETER_NOT_VALID", ""); 
+		}
+
+
+		if (in_array($status, Array(1,2)) && validate_url($content_data) == false)
 		{
 			return Array("URL_NOT_VALID", ""); 
 		}
 
-		$url = fix_url($url_addr);
-		$domain = get_domain($url);
+		$fixed = fix_content($content_data, $status);
 
-		if (has_blacklist($domain)) 
+		if (in_array($fixed["status"], Array(1,2)))
 		{
-			return Array("URL_IN_BLACKLIST", ""); 
+			$domain = get_domain($fixed["content"]);
+
+			if (has_blacklist($domain)) 
+			{
+				return Array("URL_IN_BLACKLIST", ""); 
+			}	
 		}
-
-		if (has_url($url))
+		
+		if (has_content($fixed["content"]))
 		{
-			$url_info = get_url_info($url); 
+			$url_info = get_content_info($fixed["content"]); 
 			return Array("SUCCESS", $url_info); 
 		}
 
+		if (in_array($fixed["status"], Array(4)))
+		{
+			file_uploader($_FILES["content_data"], $fixed["content"], $save_as="png", $v_pos="center", $h_pos="center", $wm_size=1);
+		}
+
 		$db = get_connection();
-		$sql = sprintf("insert into `url`(`id`, `url`, `domain`, `created`) values('', '%s', '%s', '%s');", 
-					$url,
+		$sql = sprintf("insert into content(id, data, domain, created_on, created_by, status) values('', '%s', '%s', '%s', '%s', '%s');", 
+					si($fixed["content"]),
 					$domain,
-					date("Y-m-d H:i:s")
+					date("Y-m-d H:i:s"),
+					get_ip(),
+					si($fixed["status"])
 		);
+
+//		mysql_query($sql);
 
 		$db->BeginTrans();
 		$ok = $db->Execute($sql);
@@ -43,15 +76,55 @@
 			$db->RollbackTrans();
 		}
 		$db->CompleteTrans();
-
-		$url_info = get_url_info($url);
+ 
+		$url_info = get_content_info($fixed["content"]);
 		return Array("SUCCESS", $url_info);
+	}
+
+	function get_image_count($beaty=false)
+	{
+		$db = get_connection();
+		$ok = $db->GetOne("select count(id) from content where status=4");
+		if (!$ok) { echo $db->ErrorMsg();}
+
+		if ($beaty == true)
+		{
+    		return number_format($ok, 0, ',', '');
+		}
+		return $ok;
+	}
+
+
+	function get_mail_count($beaty=false)
+	{
+		$db = get_connection();
+		$ok = $db->GetOne("select count(id) from content where status=2");
+		if (!$ok) { echo $db->ErrorMsg();}
+
+		if ($beaty == true)
+		{
+    		return number_format($ok, 0, ',', '');
+		}
+		return $ok;
+	}
+
+	function get_text_count($beaty=false)
+	{
+		$db = get_connection();
+		$ok = $db->GetOne("select count(id) from content where status=3");
+		if (!$ok) { echo $db->ErrorMsg();}
+
+		if ($beaty == true)
+		{
+    	    return number_format($ok, 0, ',', '');
+		}
+		return $ok;
 	}
 
 	function get_url_count($beaty=false)
 	{
 		$db = get_connection();
-		$ok = $db->GetOne("select count(id) from url");
+		$ok = $db->GetOne("select count(id) from content where status=1");
 		if (!$ok) { echo $db->ErrorMsg();}
 
 		if ($beaty == true)
@@ -61,29 +134,29 @@
 		return $ok;
 	}
 	
-	function get_url_info_by_code($code)
+	function get_content_info_by_code($code)
 	{
 		$id = decode_url_id($code);
 		$db = get_connection();
-		$ok = $db->GetRow("select id, url, domain from url where id='{$id}'");
+		$ok = $db->GetRow("select id, data, domain, status from content where id='{$id}'");
 		if (!$ok) { echo $db->ErrorMsg();}
 		
 		return $ok;
 	}
 
-	function get_url_info($url)
+	function get_content_info($content_data)
 	{
 		$db = get_connection();
-		$ok = $db->GetRow("select id, url, domain from url where url='{$url}'");
+		$ok = $db->GetRow("select id, data, domain, status from content where data='".si($content_data)."'");
 		if (!$ok) { echo $db->ErrorMsg();}
 		
 		return $ok;
 	}
 
-	function has_url($url)
+	function has_content($content_data)
 	{
 		$db = get_connection();
-		$val = $db->GetOne("select count(*) from url where url='{$url}'");
+		$val = $db->GetOne("select count(*) from content where data='{$content_data}'");
 
 		return ($val > 0);
 	}
@@ -107,18 +180,31 @@
 		return str_replace("www.", "", parse_url($url, PHP_URL_HOST));
 	}	
 
-	function fix_url($url_addr)
+	function fix_content($content_data, $status)
 	{
-		$url_addr = str_replace("mailto:", "", $url_addr);
-		if (is_valid_email($url_addr))
+		$content_data = str_replace("mailto:", "", $content_data);
+		if (is_valid_email($content_data))
 		{
-			return "mailto:$url_addr";
+			return Array (content=>"mailto:$content_data", status=>2);
+		}
+		else if ($status == 3)
+		{
+			return Array(content=>$content_data, status=>3);
+		}
+		else if ($status == 4)
+		{
+			$original=$_FILES['content_data']['tmp_name'];
+			$size=$_FILES['content_data']['size'];
+			$file = md5_file($original)."-".$size;
+			$data = "{$file}.jpeg";
+
+			return Array(content=>$data, status=>4);
 		}
 		else
 		{
-			$sch = parse_url($url_addr, PHP_URL_SCHEME);
+			$sch = parse_url($content_data, PHP_URL_SCHEME);
 
-			return ((strlen($sch)==0) ? "http://" : "") . $url_addr;
+			return Array(content=>((strlen($sch)==0) ? "http://" : "") . $content_data, status=>1);
 		}
 	}
 
@@ -132,14 +218,14 @@
 	}
 
 
-	function validate_url($url_addr)
+	function validate_url($content_data)
 	{
-		if (isset($url_addr) == false || strlen($url_addr) == 0)
+		if (isset($content_data) == false || strlen($content_data) == 0)
 		{
 			return false;
 		}
 		
-		if (strchr($url_addr, ".") == "")
+		if (strchr($content_data, ".") == "")
 		{
 			return false;
 		}
@@ -147,33 +233,10 @@
 		return true;
 	}
 
-/*
-	function get_url_id()
-	{
- 		$code_size = get_code_size();
-		$url_id = create_uid($code_size);
-
-		$counter = 0;
-		while(has_url_id($url_id))
-		{
-			if ($counter == MAX_URL_ID_GENERATE_SIZE)
-			{
-				$code_size++; 
-				set_code_size($code_size);
-			}
-
-			$url_id = create_uid($code_size);
-			$counter++;
-		}
-
-		return $url_id;
-	}
-*/
-
 	function has_url_id($url_id)
 	{
 		$db = get_connection();
-		$val = $db->GetOne("select count(*) from url where `id`='$url_id'");
+		$val = $db->GetOne("select count(*) from content where `id`='$url_id'");
 		if (!$val) echo $db->ErrorMsg();
 
 		return ($val > 0) ? true : false;
@@ -286,27 +349,9 @@
 	
 	}
 
-/*
-	function create_uid($random_id_length)
-	{
-		//generate a random id encrypt it and store it in $rnd_id 
-		$rnd_id = crypt(uniqid(rand(),1)); 
-
-		//to remove any slashes that might have come 
-		$rnd_id = strip_tags(stripslashes($rnd_id)); 
-
-		//Removing any . or / and reversing the string 
-		$rnd_id = str_replace(".", "", $rnd_id); 
-		$rnd_id = strrev(str_replace("/", "", $rnd_id)); 
-
-		//finally I take the first 10 characters from the $rnd_id 
-		return substr($rnd_id,0,$random_id_length); 
-	}
-*/
-
 	function decode_url_id($code)
 	{	
-		$scheme = "0123456789abcdefghijklmnoprstuqwxvyzABCDEFGHIJKLMNOPRSTUQWXVYZ";
+		$scheme = "abcdefghijklmnoprstuqwxvyz0123456789ABCDEFGHIJKLMNOPRSTQWXUVYZ";
 		$scheme_size = strlen($scheme);
 
 		$number  = 0;
@@ -324,7 +369,7 @@
 
 	function encode_url_id($number, $code="")
 	{
-		$scheme = "0123456789abcdefghijklmnoprstuqwxvyzABCDEFGHIJKLMNOPRSTUQWXVYZ";
+		$scheme = "abcdefghijklmnoprstuqwxvyz0123456789ABCDEFGHIJKLMNOPRSTQWXUVYZ";
 		$scheme_size = strlen($scheme);
 		
 		if ($number > $scheme_size)
@@ -344,7 +389,90 @@
 		return $code;
 	}
 
+	// cross site scripting
+	function has_xss($content)
+	{
+		$seclist = Array("<script", "<iframe", "</script", "</iframe");
+		foreach ($seclist as $val)
+		{
+			if (stristr($content, $val))
+			{
+				return true;
+			}
+		}
 
+		return false;
+	}
 
+	//sql enjection
+	function si($content)
+	{
+		if (get_magic_quotes_gpc()) {
+			$content = stripslashes($content);
+		}
+		return  mysql_real_escape_string($content);
+	}
 
+	// has html
+	function has_html($content)
+	{
+		$html_list = Array("<a", "<div", "<p", "<br", "<span", "</");
+		foreach ($html_list as $val)
+		{
+			if (stristr($content, $val))
+			{
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	function file_uploader($image, $target_name)
+	{
+		$screen_resolution = 1280;
+
+		$image_target=$image["tmp_name"];
+		$image_dest=dirname(__FILE__).'/images/'.$target_name;
+		$watermark_path=dirname(__FILE__).'/watermark.png';
+		// Path the the requested file
+		 $path = $image_target;
+		
+		// Load the requested image
+		$image = imagecreatefromstring(file_get_contents($path));
+		
+		$w = imagesx($image);
+		$h = imagesy($image);
+
+		if ($w > $h && $w > $screen_resolution) 
+		{
+			$nw = $screen_resolution;
+			$nh = $screen_resolution * $h / $w;
+		}
+		else if ($h > $w && $h > $screen_resolution)
+		{
+			$nh = $screen_resolution;
+			$nw = $screen_resolution * $w / $h;
+		}
+
+		if ($nh > 0) // resizer
+		{
+			$thumb = imagecreatetruecolor($nw, $nh);
+			imagecopyresized($thumb, $image, 0, 0, 0, 0, $nw, $nh, $w, $h);
+			$res = imagejpeg($thumb, $image_dest);
+
+			$image = imagecreatefromstring(file_get_contents($image_dest));
+			$w = $nw;
+			$h = $nh;
+		}
+	
+		// Load the watermark image
+		$watermark = imagecreatefrompng($watermark_path);
+		$ww = imagesx($watermark);
+		$wh = imagesy($watermark);
+
+		// Merge watermark upon the original image
+		imagecopy($image, $watermark, $w-$ww, $h-$wh, 0, 0, $ww, $wh);
+		$res = imagejpeg($image, $image_dest);
+	}
 ?>

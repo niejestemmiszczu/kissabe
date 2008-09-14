@@ -8,6 +8,11 @@
 	position: relative;
 	min-width: 500px;
 }
+
+#content {
+	width:600px; text-align:center; /*border:1px #000 solid;*/
+}
+
 #menutop img {
 	margin: 0;
 	padding: 0;
@@ -22,6 +27,9 @@
 }
 #menutop #menutext a {
         margin-right: 12px;
+}
+#menutext strong {
+		padding: 10px;
 }
 
 #main {
@@ -64,7 +72,7 @@
 	position: relative;
 	text-align: left;
 	height: 300px;
-	width: 406px;
+	width: 600px;
 	background: #fff;
 	margin: 0 auto;
 	clear: left;
@@ -97,6 +105,8 @@
 }
 #footer {
 	font-size: 10px;
+	text-align:left;
+	width:450px;
 }
 #footer a {
 	text-decoration: none;
@@ -115,6 +125,29 @@ input.button {
 html, body {
 	height: 100%;
 }
+
+#footer-menu {
+	font-size: 0.9em;
+	color: #ababab;	
+}
+
+#footer-menu a {
+	font-size: 1.2em;
+	color: gray;	
+}
+
+#language-menu {
+	float: right; 
+	vertical-align:top;
+	margin-top:-4px;
+}
+
+#language-menu a {
+	font-size: 1em;
+	color: gray;	
+}
+
+
 body {
 	margin: 0;
 	padding: 0;
@@ -142,3 +175,11 @@ body a:hover {
         text-decoration: underline;
         color: #ff0000;
 }
+
+.menuitem_selected 
+{
+	font-weight: bold;
+}
+
+#conten3233tta{ width: 500px; height: 200px; font-size: 1em; }
+

@@ -1,0 +1,134 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: kissa.be\n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2008-09-09 07:56+0200\n"
+"Last-Translator: Hasan Ozgan <hasan@ozgan.net>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "hello kissa.be"
+msgstr "merhaba kissa.be"
+
+msgid "term of use"
+msgstr "talimatnâne"
+
+msgid "privacy"
+msgstr "gizlilik"
+
+msgid "contact"
+msgstr "iletişim"
+
+msgid "homepage"
+msgstr "anasayfa"
+
+msgid "shorten this"
+msgstr "kissalt bakim!"
+
+msgid "term of use notes"
+msgstr "<h2>nedir?</h2><p><i>kissa.be!</i> ticari bir kaygı düşüncesi yoktur. Geliştirici ekibin tatilde tinyurl.com'u görüp can sıkıntısı da üzerine binince \"ne var canım bu serviste?\" demesi ve \"bizim olsun daha da güzeli olsun\" düşüncesiyle çooooooook uzun web adreslerini maksimum seviyede kısaltmayı amaç edinen bir hededir. <p/><b>Örneğin;</b><p/><div style=\"padding-left:30px\"><b>http://maps.google.com/maps?f=q&hl=en&q=Be%C5%9Fikta%C5%9F,+Be%C5%9Fikta%C5%9F,+Turkey&jsv=121&sll=37.0625,-95.677068&sspn=31.839416,79.013672&ie=UTF8&oi=georefine&ct=clnk&cd=2&geocode=0,41.071553,29.023276</b><p/>gibi karışık bir adresi aşağıda görünen hale dönüştürür.<p/><b>http://kissa.be/8</b><p/></div></p><h2>ne işe yarar?</h2>	<p>kissa.be'nin birkaç kullanım şekli aşağıda sıralanmıştır!<p/>	<ul>		<li>sms, wap-push vb cep telefonu için kıssa web adreslerine dönüştürür.</li>		<li>blog, forum ve sosyal ağlarda adresleri rahatlıkla paylaşmanıza sebep olur</li>		<li>web adreslerinizi spam botlarından korur.</b>		<li><i>mailto:u.name@example.com</i> şeklinde girilen eposta adreslerinizi SPAM botlarından saklamanız için idealdir.</li>		<li>temiz url adresleri ve twitter, del.icio.us gibi sitelerdeki karakter sınırlamaları içindir</li>	</ul></p><hr><h2>nasıl çalışır?</h2><a name=\"preview\"></a><h3>kullanımı</h3><p>kissa.be! sitesinin anasayfasından uzun web adresinizi girin ve kıssalt butonuna basın. karşınıza gelen sayfada http://kissa.be/1 gibi bir url göreceksiniz. Bu url tarafımızdan yönlendirilir.<p/> <ul>	<li>kissa.be! url kod tanımları tekildir. Yani aynısından birdaha başka bir web adresi için oluşturulmaz.</li>	<li>ayrıca bu url bilgisi hiçbir zaman silinmeme garantisi tarafımızdan verilmiştir.</li>	<li>url bellirlenen algoritmaya göre basamak sayısını arttırmaktadır. Maksimum basamak sayısının 8 olması hedeflenmiştir.</li>	<li>hem web adresi hem de, eposta adresi girilebilir</li></ul><h3>kod'dan web adresine dönüş</h3><p>Evet bu mümkündür. http://kissa.be/1 adresini internet gezginin adres çubuğuna yazdığınızda adrese yönlendirilme yapılır. Ama url kodunun sonuna '-' işareti koyduğunuzda size uzun adresin görüntüler.<p>Örneğin:http://kissa.be/1 adresinin sorgulama istediniz. Bu adresin sonuna http://kissa.be/1- şeklinde '-' işaretini koyduğunuzda url kod önbakış sayfasına gidersiniz.</p></p><h3>bookmark</h3><p>Eğer site içeriğinizi bookmarklamak isteyenler için sitenizde link vermek isterseniz, aşağıdaki javascript link ile bunu yapabilirsiniz.<br/> <a href=\"javascript:void(location.href='http://kissa.be/create.php?url='+location.href)\">adresi kıssalt bakim</a>.</p><h3>api desteği</h3><p>Eğer çeşitli eklentilerde ve projelerde bu servisten faydalanmak isterseniz api desteğimizden faydalanabilirsiniz.<p>Örneğin;<br/><b>http://kissa.be/api.php?url=http://sizin.uzun.web/adresiniz?url=olarak&burada=kullanildi</b></p>şeklinde çağrı yaptığınızda; sadece kıssaltılmış web adresinden oluşan sayfa karşınıza çıkacaktır.</p><h3>firefox plugin</h3><p>Firefox plugini Gökhan Goralı tarafından hazırlandı. Kendisine teşekkür ederiz.</p><p>Firefox pluginini <a href=\"kissa.be-v01.xpi\">buradan</a> indirebilirsiniz."
+
+msgid "privacy notes"
+msgstr "<p>kissa.be! size ait bir veri saklamaz. bilgisayarınıza attığı çerez kissa.be'yi daha verimli kullanabilmeniz için, dil ve konum bilgisi tutar. kişisel hiçbir şeyinizle ilgilenmez. bu verileri 3. parti şirketlere satmayı da düşünmez.  </p><p>kissa.be! ekibi</p>"
+
+msgid "contact notes"
+msgstr "<p>		Her türlü şikayet ve isteklerinizi bildirmek için veya hata bildirimleriniz için aşağıda verdiğimiz adresi kullanabilirsiniz.<br>		</p><p>e-posta: <b>contact [at] kissa.be</b></p>		<i>Epostayı gönderirken yukarıdaki [at] yazısını @ işareti ile değiştirmelisiniz. </i>	"
+
+msgid "<b>%s</b> e-mail shorted"
+msgstr "<b>%s</b> e-posta başarıyla kıssaltıldı"
+
+msgid "<b>%s</b> url address shorted"
+msgstr "<b>%s</b> url başarıyla kıssaltıldı"
+
+msgid "<b>%s</b> text shorted"
+msgstr "<b>%s</b> metin başarıyla kıssaltıldı"
+
+msgid "<b>%s</b> image shorted"
+msgstr "<b>%s</b> görsel başarıyla kıssaltıldı"
+
+msgid "Add New Language"
+msgstr "Yeni Dil Ekle"
+
+msgid "Languages"
+msgstr "Diller"
+
+msgid "url link"
+msgstr "url"
+
+msgid "text link"
+msgstr "metin"
+
+msgid "email link"
+msgstr "eposta"
+
+msgid "image link"
+msgstr "görsel"
+
+msgid "download"
+msgstr "indir"
+
+msgid "copy to clipboard"
+msgstr "panoya kopyala"
+
+msgid "open in new window"
+msgstr "yeni pencerede aç"
+
+msgid "Your shortened URL is %s [%s] (%d) characters."
+msgstr "Kıssaltılmış web adresiniz %s [%s] (%d) karakter tutmuştur."
+
+msgid "The original URL was %s [%s] (%d) characters."
+msgstr "Orjinal URL adresiniz %s [%s] (%d) karakter tutmuştur."
+
+msgid "kissa.be! - url shortener"
+msgstr "kissa.be! - web adresi kissaltma hedesi"
+
+msgid "creator"
+msgstr "kıssaltıcı"
+
+msgid "it's copied to clipboard ;-)"
+msgstr "Panoya kopyalandı ve yapıştırılmaya hazır! ;-)"
+
+msgid "Copy to Clipboard"
+msgstr "Panoya kopyala"
+
+msgid "Example"
+msgstr "Örneğin"
+
+msgid "We made your URL <b>%d%%</b> (%d characters) shorter!"
+msgstr "Sizin adresinizi <b>%%%d</b> oranında, (%d) karakter küçülttük!"
+
+msgid "Sorry! we didn't make your URL!"
+msgstr "Üzgünüz! sizin web adresinizi küçültemedik!"
+
+msgid "user-friendly-url-explanation-area"
+msgstr "kullanici-dostu-aciklama-alani"
+
+msgid "You can write explanation in the user friendly URL."
+msgstr "Kullanıcı dostu URL alanını kullanarak, kıssalttığınız web adresi daha anlaşılır bir hale gelir."
+
+msgid "<p/><b>%s</b> in the blacklist!</p>"
+msgstr "<p/><b>%s</b> adresi karalistede olduğu için listeye eklenmemiştir !</p>"
+
+msgid "Invalid your URL address !"
+msgstr "Web adresiniz geçerli değil !"
+
+msgid "Please, check your parameters!"
+msgstr "Lütfen parametreleri kontrol ediniz !"
+
+msgid "Your original URL"
+msgstr "Gerçek web adresiniz"
+
+msgid "Go this page"
+msgstr "bu web adresine git bakim!"
+
+msgid "Statistic"
+msgstr "İstatistik"
+
+msgid "Page View"
+msgstr "Sayfa Ziyareti"
+
+msgid "Uniq Page View"
+msgstr "Tekil Sayfa Ziyareti"
+
