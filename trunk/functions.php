@@ -372,7 +372,7 @@
 		$scheme = "abcdefghijklmnoprstuqwxvyz0123456789ABCDEFGHIJKLMNOPRSTQWXUVYZ";
 		$scheme_size = strlen($scheme);
 		
-		if ($number > $scheme_size)
+		if ($number >= $scheme_size)
 		{
 			$c = $number % $scheme_size;
 			$code .= $scheme[$c];
