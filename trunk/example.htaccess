@@ -1,7 +1,0 @@
-RewriteEngine on 
-
-RewriteCond %{REQUEST_URI} !(\.gif)|(\.jpg)|(\.png)|(\.css)|(\.js)|(\.php)|(\.swf)|(\.xpi)|(\.gz)|(\.pot)$ 
-RewriteCond %{REQUEST_URI} ^(.*)$
-#RewriteCond %{REQUEST_FILENAME} ! -f
-
-RewriteRule (.*)$ get.php?code=$1 [L]
